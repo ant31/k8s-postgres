@@ -4,6 +4,13 @@
 # db_passwd: "mypass"
 # - node where the database will run
 # db_node: "node1"
+#
+# Change the host directory if needed
+# postgres:
+#   volumes:
+#     - name: varlibpostgres
+#       hostPath:
+#         path: <host_directory>
 
 postgres_resources:
   - file: postgres-rc.yaml

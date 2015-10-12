@@ -1,7 +1,6 @@
 ---
 appname: '0'
 postgres_manifests_dir: /etc/k8s/manifests/postgres
-db_passwd: "changeme"
 
 postgres:
   name: postgres
@@ -26,6 +25,6 @@ postgres:
   volumes:
     - name: varlibpostgres
       hostPath: 
-        path: /var/lib/postgres/osmdb
+        path: /var/lib/postgres/data
   nodeSelector:
     role: "db"

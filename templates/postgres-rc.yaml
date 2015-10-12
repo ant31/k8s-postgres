@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: {{ postgres.name }}-{{ postgres.appname }}
+  name: {{ postgres.name }}-{{ appname }}
   namespace: {{ postgres.namespace|default('default') }}
   labels: {{ postgres.labels }}
 spec:
@@ -31,12 +31,16 @@ spec:
           - name: {{ env.name }}
             value: {{ env.value }}
 {% endfor %}
+{% endif %}
 {% if container.command is defined %}
         command: {{ container.command }}
 {% endif %}
-        {% if container.args is defined %}
+{% if container.args is defined %}
         args: {{ container.args }}
+{% endif %}
 {% if container.volumeMounts is defined %}
+        volumeMounts: {{ container.volumeMounts }}
+{% endif %}
 {% if container.ports is defined %}
         ports: {{ container.ports }}
 {% endif %}
@@ -51,5 +55,5 @@ spec:
       volumes: {{ postgres.volumes }}
 {% endif %}
 {% if postgres.nodeSelector %}
-      nodeSelector: {{ postgresql.nodeSelector }}
+      nodeSelector: {{ postgres.nodeSelector }}
 {% endif %}

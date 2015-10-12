@@ -5,4 +5,4 @@
     k8s_resources: '{{postgres_resources}}'
 
 - name: Node Selection | Add label to the chosen node
-  shell: /usr/local/bin/kubectl label nodes {{ db_node }} role="db"
+  shell: /usr/local/bin/kubectl label nodes {{ db_node }} --overwrite role="db"
