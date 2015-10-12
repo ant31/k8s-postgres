@@ -1,0 +1,8 @@
+---
+- include: "{{role_path}}/../k8s-common/tasks/common.yml"
+  vars:
+    k8s_manifests_dir: '{{postgres_manifests_dir}}'
+    k8s_resources: '{{postgres_resources}}'
+
+- name: Node Selection | Add label to the chosen node
+  shell: /usr/local/bin/kubectl label nodes {{ db_node }} role="db"

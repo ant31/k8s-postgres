@@ -1,0 +1,15 @@
+---
+# !Required vars: 
+# - 'postgres' user password
+# db_passwd: "mypass"
+# - node where the database will run
+# db_node: "node1"
+
+postgres_resources:
+  - file: postgres-rc.yaml
+    resource: rc
+    name: postgres
+
+  - file: postgres-svc.yaml
+    resource: svc
+    name: postgres

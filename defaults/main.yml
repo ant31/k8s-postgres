@@ -1,0 +1,31 @@
+---
+appname: '0'
+postgres_manifests_dir: /etc/k8s/manifests/postgres
+db_passwd: "changeme"
+
+postgres:
+  name: postgres
+  replicas: 1
+  labels:
+    k8s-app: postgres
+    version: v1
+    kubernetes.io/cluster-service: "true"
+  containers:
+    - name: postgres
+      image: postgres
+      limits:
+        cpu: 500m
+      env:
+        - name: "POSTGRES_PASSWORD"
+          value: "{{ db_passwd }}"
+      ports:
+        - containerPort: 5432
+      volumeMounts:
+        - name: varlibpostgres
+          mountPath: /var/lib/postgresql/data
+  volumes:
+    - name: varlibpostgres
+      hostPath: 
+        path: /var/lib/postgres/osmdb
+  nodeSelector:
+    role: "db"
