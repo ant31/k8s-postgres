@@ -133,7 +133,7 @@ galaxy_info:
   #- system
   #- web
 dependencies:
-  - role: k8s-common
+  - role: apps/k8s-common
     src: https://github.com/ansibl8s/k8s-common.git
 
   # List your role dependencies here, one per line. Only
