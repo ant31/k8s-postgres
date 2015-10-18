@@ -13,6 +13,9 @@
 #
 # Optionnaly you can define what cluster address will be assign to the database pod
 # postgres_clusterIP : 10.233.54.32
+#
+# Define namespace
+# postgres_namespace: <namespace>
 
 postgres_resources:
   - file: postgres-rc.yaml
