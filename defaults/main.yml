@@ -1,30 +1,43 @@
 ---
-appname: '0'
 postgres_manifests_dir: /etc/k8s/manifests/postgres
 
 postgres:
   name: postgres
   replicas: 1
-  labels:
-    k8s-app: postgres
-    version: v1
-    kubernetes.io/cluster-service: "true"
-  containers:
-    - name: postgres
-      image: postgres
-      limits:
-        cpu: 500m
-      env:
-        - name: "POSTGRES_PASSWORD"
-          value: "{{ db_passwd }}"
-      ports:
-        - containerPort: 5432
-      volumeMounts:
-        - name: varlibpostgres
-          mountPath: /var/lib/postgresql/data
-  volumes:
+  type: NodePort
+
+postgres_labels:
+  k8s-app: postgres
+  version: v1
+  kubernetes.io/cluster-service: "true"
+
+postgres_volumes:
     - name: varlibpostgres
       hostPath: 
         path: /var/lib/postgres/data
-  nodeSelector:
-    role: "db"
+
+# By default this pod will only run on nodes with the label "role=database"
+postgres_nodeselector:
+  role: "database"
+
+postgres_selector:
+  k8s-app: postgres
+
+postgres_container_image:
+  name: postgres
+  tag: latest
+
+postgres_container_limits:
+  cpu: 800m
+  memory: 500Mi
+
+postgres_container_env:
+  - name: "POSTGRES_PASSWORD"
+    value: "{{ pg_pass }}"
+
+postgres_container_ports:
+  - containerPort: 5432
+
+postgres_container_volumemounts:
+  - name: varlibpostgres
+    mountPath: /var/lib/postgresql/data

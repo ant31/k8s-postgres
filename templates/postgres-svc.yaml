@@ -1,16 +1,15 @@
 apiVersion: "v1"
 kind: "Service"
 metadata:
-  name: {{ postgres.name }}-{{ appname }}
-  namespace: {{ postgres.namespace|default('default') }}
-  labels: {{ postgres.labels }}
+  name: {{ postgres.name }}
+  labels: {{ postgres_labels }}
 spec:
 {% if postgres.type is defined %}
   type: {{ postgres.type }} 
 {% endif %}
-  selector: {{ postgres.selector|default(postgres.labels) }}
-{% if postgres.clusterIP is defined %}
-  clusterIP:  {{ postgres.clusterIP }}
+  selector: {{ postgres_selector|default(postgres_labels) }}
+{% if postgres_clusterIP is defined %}
+  clusterIP:  {{ postgres_clusterIP }}
 {% endif %}
   ports: 
     - name: pg

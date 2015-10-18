@@ -1,59 +1,56 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: {{ postgres.name }}-{{ appname }}
-  namespace: {{ postgres.namespace|default('default') }}
-  labels: {{ postgres.labels }}
+  name: {{ postgres.name }}
+  labels: {{ postgres_labels }}
 spec:
   replicas: {{ postgres.replicas|default(1) }}
-  selector: {{ postgres.selector|default(postgres.labels) }}
+  selector: {{ postgres_selector|default(postgres_labels) }}
   template:
     metadata:
-      labels: {{ postgres.labels }}
+      labels: {{ postgres_labels }}
     spec:
-{% for container in postgres.containers %}
       containers:
-      - name: {{ container.name }}
-        image: {{ container.image }}
+      - name: postgres
+        image: "{{ postgres_container_image.name }}:{{ postgres_container_image.tag|default('latest') }}"
+{%      if postgres_container_limits is defined %}
         resources:
-{% if container.limits is defined %}
           limits:
-{% if container.limits.cpu is defined %}
-            cpu: {{ container.limits.cpu }}
-{% endif %}
-{% if container.limits.memory is defined %}
-            memory: {{ container.limits.memory }}
-{% endif %}
-{% endif %}
-{% if container.env is defined %}
+{%        if postgres_container_limits.cpu is defined %}
+            cpu: {{ postgres_container_limits.cpu }}
+{%        endif %}
+{%        if postgres_container_limits.memory is defined %}
+            memory: {{ postgres_container_limits.memory }}
+{%        endif %}
+{%      endif %}
+{%      if postgres_container_env is defined %}
         env:
-{% for env in container.env %}
+{%        for env in postgres_container_env %}
           - name: {{ env.name }}
             value: {{ env.value }}
-{% endfor %}
+{%        endfor %}
+{%      endif %}
+{%      if postgres_container_command is defined %}
+        command: {{ postgres_container_command }}
+{%      endif %}
+{%      if postgres_container_args is defined %}
+        args: {{ postgres_container_args }}
+{%      endif %}
+{% if postgres_container_volumemounts is defined %}
+        volumeMounts: {{ postgres_container_volumemounts }}
 {% endif %}
-{% if container.command is defined %}
-        command: {{ container.command }}
+{% if postgres_container_ports is defined %}
+        ports: {{ postgres_container_ports }}
 {% endif %}
-{% if container.args is defined %}
-        args: {{ container.args }}
+{% if postgres_container_livenessprobe is defined %}
+        livenessProbe: {{ postgres_container_livenessprobe }}
 {% endif %}
-{% if container.volumeMounts is defined %}
-        volumeMounts: {{ container.volumeMounts }}
+{% if postgres_container_readinessprobe is defined %}
+        readinessProbe: {{ postgres_container_readinessprobe }}
 {% endif %}
-{% if container.ports is defined %}
-        ports: {{ container.ports }}
+{% if postgres_volumes is defined %}
+      volumes: {{ postgres_volumes }}
 {% endif %}
-{% if container.livenessProbe is defined %}
-        livenessProbe: {{ container.livenessProbe }}
-{% endif %}
-{% if container.readinessProbe is defined %}
-        readinessProbe: {{ container.readinessProbe }}
-{% endif %}
-{% endfor %}
-{% if postgres.volumes is defined %}
-      volumes: {{ postgres.volumes }}
-{% endif %}
-{% if postgres.nodeSelector %}
-      nodeSelector: {{ postgres.nodeSelector }}
+{% if postgres_nodeselector %}
+      nodeSelector: {{ postgres_nodeselector }}
 {% endif %}
