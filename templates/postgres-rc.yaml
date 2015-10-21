@@ -51,6 +51,6 @@ spec:
 {% if postgres_volumes is defined %}
       volumes: {{ postgres_volumes }}
 {% endif %}
-{% if postgres_nodeselector %}
+{% if postgres_nodeselector is defined %}
       nodeSelector: {{ postgres_nodeselector }}
 {% endif %}
