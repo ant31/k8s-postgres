@@ -8,7 +8,7 @@
 #
 # # This pod will only run on nodes with the label "role=database"
 # postgres_nodeselector:
-#   role: "database"
+#   database: "yes"
 #
 # # !Optionnal vars:
 # ------------------

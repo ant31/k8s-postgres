@@ -5,6 +5,6 @@
     k8s_resources: '{{postgres_resources}}'
     k8s_namespace: "{{ postgres_namespace | default('default') }}"
 
-- name: Node Selection | Add label "database" to the chosen node
-  shell: /usr/local/bin/kubectl label nodes {{ db_node }} --overwrite role="database"
+- name: Node Selection | Add label "database=yes" to the chosen node
+  shell: /usr/local/bin/kubectl label nodes {{ db_node }} --overwrite database="yes"
   when: db_node is defined
