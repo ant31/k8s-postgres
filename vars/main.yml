@@ -2,9 +2,9 @@
 # # !Required vars:
 # -------------------
 # # 'postgres' user password
-# pg_pass: "changeme"
+# pg_pass: <password>
 # # node where the database will run
-# db_node: "<node1_ip>"
+# db_node: "10.115.99.2"
 #
 # # This pod will only run on nodes with the label "role=database"
 # postgres_nodeselector:
@@ -23,11 +23,6 @@
 #
 # Define namespace
 # postgres_namespace: <namespace>
-#
-# # Container limits
-# postgres_container_limits:
-#   cpu: 800m
-#   memory: 500Mi
 
 postgres_resources:
   - file: postgres-rc.yaml
@@ -37,3 +32,7 @@ postgres_resources:
   - file: postgres-svc.yaml
     resource: svc
     name: postgres
+
+  - file: postgres-secrets.yaml
+    resource: secret
+    name: registry

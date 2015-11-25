@@ -1,4 +1,7 @@
 ---
+- set_fact:
+    postgres_secrets: "{{ postgres_secrets | to_json }}"
+
 - include: "{{role_path}}/../k8s-common/tasks/common.yml"
   vars:
     k8s_manifests_dir: '{{postgres_manifests_dir}}'
