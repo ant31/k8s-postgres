@@ -1,29 +1,4 @@
 ---
-# # !Required vars:
-# -------------------
-# # 'postgres' user password
-# pg_pass: <password>
-# # node where the database will run
-# db_node: "10.115.99.2"
-#
-# # This pod will only run on nodes with the label "role=database"
-# postgres_nodeselector:
-#   database: "yes"
-#
-# # !Optionnal vars:
-# ------------------
-# # Change the host directory if needed
-# postgres_volumes:
-#     - name: varlibpostgres
-#       hostPath:
-#         path: <host_directory>
-#
-# # you can define what cluster address will be assigned to the database pod
-# postgres_clusterIP : 10.233.54.32
-#
-# Define namespace
-# postgres_namespace: <namespace>
-
 postgres_resources:
   - file: postgres-rc.yaml
     resource: rc

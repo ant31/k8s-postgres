@@ -1,4 +1,16 @@
 ---
+# 'postgres' user password (required)
+pg_pass: 
+# node where the database will run (required)
+db_node:
+
+# This pod will only run on nodes with the label "role=database"
+postgres_nodeselector:
+  database: "yes"
+
+# Define namespace
+postgres_namespace: default
+
 postgres_manifests_dir: /etc/k8s/manifests/postgres
 
 postgres:
