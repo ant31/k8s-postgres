@@ -43,12 +43,23 @@ postgres_container_volumemounts:
 # Container limits
 postgres_container_limits:
   cpu: 800m
-  memory: 1Gi
+  # Note : to make things easier use the same unit as postgresql.conf (e.g. G, M, K etc...)
+  memory: 2G
+
+postgres_config:
+  default_statistics_target : 100
+  maintenance_work_mem : 64MB
+  checkpoint_completion_target : 0.5
+  effective_cache_size : 1GB # Must be lower than container limits
+  work_mem : 4MB
+  wal_buffers : -1
+  checkpoint_segments : 3
+  shared_buffers : 128MB
 
 postgres_secrets:
   name: "postgres-config"
   type: "Opaque"
   data:
     password: "{{ pg_pass | b64encode }}"
-    postgresql.conf: "{{ lookup('file',role_path+'/files/postgresql.conf') | b64encode }}"
-    pghba.conf: "{{ lookup('file',role_path+'/files/pg_hba.conf') | b64encode }}"
+    postgresql.conf: "{{ lookup('template',role_path+'/templates/config/postgresql.conf') | b64encode }}"
+    pghba.conf: "{{ lookup('template',role_path+'/templates/config/pg_hba.conf') | b64encode }}"
