@@ -54,3 +54,4 @@ spec:
 {% if postgres_nodeselector is defined %}
       nodeSelector: {{ postgres_nodeselector }}
 {% endif %}
+      nodeName: "{{ postgres_nodeName }}"

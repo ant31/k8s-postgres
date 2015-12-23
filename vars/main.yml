@@ -1,4 +1,11 @@
 ---
+# 'postgres' user password (required)
+postgres_password: toto
+
+postgres_conffiles:
+  - "{{role_path}}/templates/config/pghba.conf"
+  - "{{role_path}}/templates/config/recovery.conf"
+
 postgres_resources:
   - file: postgres-rc.yaml
     resource: rc
@@ -10,4 +17,22 @@ postgres_resources:
 
   - file: postgres-secrets.yaml
     resource: secret
-    name: registry
+    name: postgres-config
+
+  - file: postgres-slave-main-svc.yaml
+    resource: svc
+    name: postgres-slave-main
+
+  - file: postgres-slave-rc.yaml
+    resource: rc
+    name: postgres-slave
+    sharded: yes
+
+  - file: postgres-slave-svc.yaml
+    resource: svc
+    name: postgres-slave
+    sharded: yes
+
+  - file: postgres-slave-secrets.yaml
+    resource: secret
+    name: postgres-slave-config

@@ -6,10 +6,5 @@ This role requires another one named [k8s-common](https://github.com/ansibl8s/k8
 
 ## Main variables
 
-**db_node** : Node where the database will run, it is used in order to control where the data will be stored.
+**postgres_password** : 'postgres' user password
 
-**db_passwd** : 'postgres' user password
-
-## TODO
-replication
-dumps
