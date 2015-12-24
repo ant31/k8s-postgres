@@ -8,3 +8,5 @@ This role requires another one named [k8s-common](https://github.com/ansibl8s/k8
 
 **postgres_password** : 'postgres' user password
 
+## WAL archive
+You should consider using a shared storage when you're using a master/slave cluster.

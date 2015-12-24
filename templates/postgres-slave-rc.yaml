@@ -36,8 +36,8 @@ spec:
 {%      if postgres_slave_container_args is defined %}
         args: {{ postgres_slave_container_args }}
 {%      endif %}
-{% if postgres_container_volumemounts is defined %}
-        volumeMounts: {{ postgres_container_volumemounts }}
+{% if postgres_slave_container_volumemounts is defined %}
+        volumeMounts: {{ postgres_slave_container_volumemounts }}
 {% endif %}
 {% if postgres_container_ports is defined %}
         ports: {{ postgres_container_ports }}
