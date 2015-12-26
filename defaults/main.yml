@@ -39,9 +39,9 @@ postgres_volumes:
         secretName: "postgres-config"
     # WAL archive directory
     # Note you should setup a shared storage readable by the slave servers
-    - name: pg-archive
-      persistentVolumeClaim:
-        claimName: pg-archive
+    #- name: pg-archive
+    #  persistentVolumeClaim:
+    #    claimName: pg-archive
 
 postgres_selector:
   k8s-app: postgres
@@ -59,8 +59,8 @@ postgres_container_volumemounts:
   - name: postgres-config
     mountPath: "/etc/secrets"
     readOnly: true
-  - name: pg-archive
-    mountPath: /archive
+  #- name: pg-archive
+  #  mountPath: /archive
 
 # Container limits
 postgres_container_limits:
@@ -96,9 +96,9 @@ postgres_slave_container_args:
 # the 'name' is randomly chosen. Can be anything
 # the 'nodeName' must be known by kubernetes
 postgres_slave_shards:
-  - name: perineum
+  - name: 1
     nodeName: node3
-  - name: poetizer
+  - name: 2
     nodeName: node4
 
 postgres_slave:
@@ -133,9 +133,9 @@ postgres_slave_container_volumemounts:
   - name: postgres-config
     mountPath: "/etc/secrets"
     readOnly: true
-  - name: pg-archive
-    mountPath: /archive
-    readOnly: true
+  #- name: pg-archive
+  #  mountPath: /archive
+  #  readOnly: true
 
 postgres_slave_volumes:
     - name: varlibpostgres
@@ -145,9 +145,9 @@ postgres_slave_volumes:
       secret:
         secretName: "postgres-slave-config"
     # ReadOnly access to the WAL written by the master
-    - name: pg-archive
-      persistentVolumeClaim:
-        claimName: pg-archive
+    #- name: pg-archive
+    #  persistentVolumeClaim:
+    #    claimName: pg-archive
 
 postgres_slave_secrets:
   name: "postgres-slave-config"
