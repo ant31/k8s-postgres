@@ -32,7 +32,7 @@ postgres_volumes:
     # PGDATA volume
     - name: varlibpostgres
       hostPath:
-        path: /var/lib/postgres/data
+        path: /var/lib/postgresql/data
     # Configuration files
     - name: postgres-config
       secret:
@@ -140,7 +140,7 @@ postgres_slave_container_volumemounts:
 postgres_slave_volumes:
     - name: varlibpostgres
       hostPath:
-        path: /var/lib/postgres/data
+        path: /var/lib/postgresql/data
     - name: postgres-config
       secret:
         secretName: "postgres-slave-config"
