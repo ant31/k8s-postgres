@@ -2,6 +2,7 @@
 - set_fact:
     postgres_secrets: "{{ postgres_secrets | to_json }}"
     postgres_slave_secrets: "{{ postgres_slave_secrets | to_json }}"
+  when: inventory_hostname == "{{ groups['kube-master'][0] }}"
 
 - include: "{{role_path}}/../k8s-common/tasks/common.yml"
   vars:
@@ -9,3 +10,4 @@
     k8s_resources: '{{postgres_resources}}'
     k8s_namespace: "{{ postgres_namespace | default('default') }}"
     k8s_shards: "{{ postgres_slave_shards }}"
+  when: inventory_hostname == "{{ groups['kube-master'][0] }}"
