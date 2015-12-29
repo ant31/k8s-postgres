@@ -95,6 +95,7 @@ postgres_slave_container_args:
 # List of slave servers,
 # the 'name' is randomly chosen. Can be anything
 # the 'nodeName' must be known by kubernetes
+shard_prefix: "slave"
 postgres_slave_shards:
   - name: 1
     nodeName: node3
