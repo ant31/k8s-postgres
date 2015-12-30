@@ -7,9 +7,11 @@ This role requires another one named [k8s-common](https://github.com/ansibl8s/k8
 
 ## Main variables
 
-There are two mandatory variables :
-**postgres_password** : 'postgres' user password
-**postgres_nodeName**: "node2"
+There are two mandatory variables **postgres_password** ('postgres' user password) and **postgres_nodeName** (node where the master server will run)
+```
+postgres_password : 'postgres'
+postgres_nodeName: "node2"
+```
 
 If a slave server is configured you'll need the following vars too:
 ```
@@ -44,6 +46,7 @@ postgres_config:
   wal_keep_segments: "32"
   archive_mode: "on"
 ```
+A similar var named postgres_slave_config can be configured in a clustered architecture.
 
 ## Replication
 The replication is done by using a specific docker image : **quay.io/smana/k8s-postgres**
