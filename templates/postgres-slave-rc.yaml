@@ -49,7 +49,7 @@ spec:
         readinessProbe: {{ postgres_container_readinessprobe }}
 {% endif %}
 {% if postgres_slave_volumes is defined %}
-      volumes: {{ postgres_slave_volumes }}
+      volumes: {{ postgres_slave_volumes|to_json }}
 {% endif %}
 {% if postgres_nodeselector is defined %}
       nodeSelector: {{ postgres_nodeselector }}

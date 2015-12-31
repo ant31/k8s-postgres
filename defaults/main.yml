@@ -32,7 +32,7 @@ postgres_volumes:
     # PGDATA volume
     - name: varlibpostgres
       hostPath:
-        path: /var/lib/postgresql/data
+        path: "/containers/{{ domain_name|default('cluster.local') }}/rc-{{ postgres.name }}/rootfs//var/lib/postgresql/data"
     # Configuration files
     - name: postgres-config
       secret:
@@ -141,7 +141,7 @@ postgres_slave_container_volumemounts:
 postgres_slave_volumes:
     - name: varlibpostgres
       hostPath:
-        path: /var/lib/postgresql/data
+        path: "/containers/{{ domain_name|default('cluster.local') }}/rc-{{ postgres_slave.name }}/rootfs//var/lib/postgresql/data"
     - name: postgres-config
       secret:
         secretName: "postgres-slave-config"
