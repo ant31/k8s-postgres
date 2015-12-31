@@ -1,5 +1,9 @@
 ---
 postgres_resources:
+  - file: postgres-secrets.yaml
+    resource: secret
+    name: postgres-config
+
   - file: postgres-rc.yaml
     resource: rc
     name: postgres
@@ -8,6 +12,20 @@ postgres_resources:
     resource: svc
     name: postgres
 
-  - file: postgres-secrets.yaml
+  - file: postgres-slave-secrets.yaml
     resource: secret
-    name: registry
+    name: postgres-slave-config
+
+  - file: postgres-slave-main-svc.yaml
+    resource: svc
+    name: postgres-slave-main
+
+  - file: postgres-slave-rc.yaml
+    resource: rc
+    name: postgres-slave
+    sharded: yes
+
+  - file: postgres-slave-svc.yaml
+    resource: svc
+    name: postgres-slave
+    sharded: yes

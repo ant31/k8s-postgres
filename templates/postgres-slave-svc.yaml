@@ -1,0 +1,17 @@
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: {{ postgres_slave.name }}-{{ item[1].name }}
+  labels: { "k8s-app": "postgres-slave", "shard": "{{ item[1].name }}" }
+spec:
+{% if postgres_slave.type is defined %}
+  type: {{ postgres_slave.type }} 
+{% endif %}
+  selector: { "k8s-app": "postgres-slave", "shard": "{{ item[1].name }}" }
+{% if postgres_slave_clusterIP is defined %}
+  clusterIP:  {{ postgres_slave_clusterIP }}
+{% endif %}
+  ports: 
+    - name: pg
+      port: 5432
+      targetPort: 5432

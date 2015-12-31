@@ -1,12 +1,17 @@
 ---
-# 'postgres' user password (required)
-pg_pass: 
-# node where the database will run (required)
-db_node:
+# 'postgres' user required)
+postgres_password:
 
-# This pod will only run on nodes with the label "role=database"
-postgres_nodeselector:
-  database: "yes"
+# replication user credentials
+# These variables are used only when setting a master slave cluster
+replication:
+  user: replicator
+  password: changeme
+  master_host: postgres
+
+# This is the node where the postgresql database server will run
+# Note : the name must match the one known by kubernetes
+postgres_nodeName: "node2"
 
 # Define namespace
 postgres_namespace: default
@@ -24,23 +29,26 @@ postgres_labels:
   kubernetes.io/cluster-service: "true"
 
 postgres_volumes:
+    # PGDATA volume
     - name: varlibpostgres
-      hostPath: 
-        path: /var/lib/postgres/data
+      hostPath:
+        path: "/containers/{{ domain_name|default('cluster.local') }}/rc-{{ postgres.name }}/rootfs//var/lib/postgresql/data"
+    # Configuration files
     - name: postgres-config
       secret:
         secretName: "postgres-config"
+    # WAL archive directory
+    # Note you should setup a shared storage readable by the slave servers
+    #- name: pg-archive
+    #  persistentVolumeClaim:
+    #    claimName: pg-archive
 
 postgres_selector:
   k8s-app: postgres
 
 postgres_container_image:
-  name: quay.io/arkena/k8s-postgres
+  name: quay.io/smana/k8s-postgres
   tag: latest
-
-postgres_container_env:
-  - name: "POSTGRES_PASSWORD"
-    value: "{{ pg_pass }}"
 
 postgres_container_ports:
   - containerPort: 5432
@@ -51,27 +59,97 @@ postgres_container_volumemounts:
   - name: postgres-config
     mountPath: "/etc/secrets"
     readOnly: true
+  #- name: pg-archive
+  #  mountPath: /archive
 
 # Container limits
 postgres_container_limits:
   cpu: 800m
   # Note : to make things easier use the same unit as postgresql.conf (e.g. G, M, K etc...)
-  memory: 2G
+  memory: 600M
 
+# Master configuration
 postgres_config:
-  default_statistics_target : 100
-  maintenance_work_mem : 64MB
-  checkpoint_completion_target : 0.5
-  effective_cache_size : 1GB # Must be lower than container limits
-  work_mem : 4MB
-  wal_buffers : -1
-  checkpoint_segments : 3
-  shared_buffers : 128MB
+  default_statistics_target : "100"
+  maintenance_work_mem : "64MB"
+  checkpoint_completion_target : "0.5"
+  effective_cache_size : "1GB" # Must be lower than container limits
+  work_mem : "4MB"
+  wal_buffers : "-1"
+  checkpoint_segments : "3"
+  shared_buffers : "128MB"
+  wal_level: "hot_standby"
+  max_wal_senders: "5"
+  wal_keep_segments: "32"
+  archive_mode: "on"
 
 postgres_secrets:
   name: "postgres-config"
   type: "Opaque"
-  data:
-    password: "{{ pg_pass | b64encode }}"
-    postgresql.conf: "{{ lookup('template',role_path+'/templates/config/postgresql.conf') | b64encode }}"
-    pghba.conf: "{{ lookup('template',role_path+'/templates/config/pg_hba.conf') | b64encode }}"
+
+# Slaves
+# The following vars are used in master/slave cluster configuration
+postgres_slave_container_args:
+  - replication
+
+# List of slave servers,
+# the 'name' is randomly chosen. Can be anything
+# the 'nodeName' must be known by kubernetes
+shard_prefix: "slave"
+postgres_slave_shards:
+  - name: 1
+    nodeName: node3
+  - name: 2
+    nodeName: node4
+
+postgres_slave:
+  name: postgres-slave
+  replicas: 1
+  type: NodePort
+
+# Container limits
+postgres_slave_container_limits:
+  cpu: 800m
+  # Note : to make things easier use the same unit as postgresql.conf (e.g. G, M, K etc...)
+  memory: 600M
+
+postgres_slave_config:
+  default_statistics_target : "100"
+  maintenance_work_mem : "64MB"
+  checkpoint_completion_target : "0.5"
+  effective_cache_size : "512GB" # Must be lower than container limits
+  work_mem : "4MB"
+  wal_buffers : "-1"
+  checkpoint_segments : 3
+  shared_buffers : "256MB"
+  wal_level: "hot_standby"
+  max_wal_senders: "5"
+  wal_keep_segments: "32"
+  archive_mode: "on"
+  hot_standby: "on"
+
+postgres_slave_container_volumemounts:
+  - name: varlibpostgres
+    mountPath: /var/lib/postgresql/data
+  - name: postgres-config
+    mountPath: "/etc/secrets"
+    readOnly: true
+  #- name: pg-archive
+  #  mountPath: /archive
+  #  readOnly: true
+
+postgres_slave_volumes:
+    - name: varlibpostgres
+      hostPath:
+        path: "/containers/{{ domain_name|default('cluster.local') }}/rc-{{ postgres_slave.name }}/rootfs//var/lib/postgresql/data"
+    - name: postgres-config
+      secret:
+        secretName: "postgres-slave-config"
+    # ReadOnly access to the WAL written by the master
+    #- name: pg-archive
+    #  persistentVolumeClaim:
+    #    claimName: pg-archive
+
+postgres_slave_secrets:
+  name: "postgres-slave-config"
+  type: "Opaque"

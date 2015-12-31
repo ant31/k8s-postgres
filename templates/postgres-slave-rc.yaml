@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: "{{ postgres_slave.name }}-{{ item[1].name }}"
+  labels: { "k8s-app": "postgres-slave", "shard": "{{ item[1].name }}" }
+spec:
+  replicas: 1
+  selector: { "k8s-app": "postgres-slave", "shard": "{{ item[1].name }}" }
+  template:
+    metadata:
+      labels: { "k8s-app": "postgres-slave", "shard": "{{ item[1].name }}" }
+    spec:
+      containers:
+      - name: postgres-slave
+        image: "{{ postgres_container_image.name }}:{{ postgres_container_image.tag|default('latest') }}"
+{%      if postgres_slave_container_limits is defined %}
+        resources:
+          limits:
+{%        if postgres_slave_container_limits.cpu is defined %}
+            cpu: {{ postgres_slave_container_limits.cpu }}
+{%        endif %}
+{%        if postgres_slave_container_limits.memory is defined %}
+            memory: {{ postgres_slave_container_limits.memory }}
+{%        endif %}
+{%      endif %}
+{%      if postgres_slave_container_env is defined %}
+        env:
+{%        for env in postgres_slave_container_env %}
+          - name: {{ env.name }}
+            value: {{ env.value }}
+{%        endfor %}
+{%      endif %}
+{%      if postgres_slave_container_command is defined %}
+        command: {{ postgres_slave_container_command }}
+{%      endif %}
+{%      if postgres_slave_container_args is defined %}
+        args: {{ postgres_slave_container_args }}
+{%      endif %}
+{% if postgres_slave_container_volumemounts is defined %}
+        volumeMounts: {{ postgres_slave_container_volumemounts }}
+{% endif %}
+{% if postgres_container_ports is defined %}
+        ports: {{ postgres_container_ports }}
+{% endif %}
+{% if postgres_container_livenessprobe is defined %}
+        livenessProbe: {{ postgres_container_livenessprobe }}
+{% endif %}
+{% if postgres_container_readinessprobe is defined %}
+        readinessProbe: {{ postgres_container_readinessprobe }}
+{% endif %}
+{% if postgres_slave_volumes is defined %}
+      volumes: {{ postgres_slave_volumes|to_json }}
+{% endif %}
+{% if postgres_nodeselector is defined %}
+      nodeSelector: {{ postgres_nodeselector }}
+{% endif %}
+      nodeName: "{{ item[1].nodeName }}"
