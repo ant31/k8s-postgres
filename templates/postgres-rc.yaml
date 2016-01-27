@@ -2,13 +2,13 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   name: {{ postgres.name }}
-  labels: {{ postgres_labels }}
+  labels: {{ postgres_labels | to_nice_json}}
 spec:
   replicas: {{ postgres.replicas|default(1) }}
-  selector: {{ postgres_selector|default(postgres_labels) }}
+  selector: {{ postgres_selector|default(postgres_labels) | to_nice_json }}
   template:
     metadata:
-      labels: {{ postgres_labels }}
+      labels: {{ postgres_labels | to_nice_json}}
     spec:
       containers:
       - name: postgres
@@ -31,25 +31,25 @@ spec:
 {%        endfor %}
 {%      endif %}
 {%      if postgres_container_command is defined %}
-        command: {{ postgres_container_command }}
+        command: {{ postgres_container_command | to_nice_json }}
 {%      endif %}
 {%      if postgres_container_args is defined %}
-        args: {{ postgres_container_args }}
+        args: {{ postgres_container_args | to_nice_json }}
 {%      endif %}
 {% if postgres_container_volumemounts is defined %}
-        volumeMounts: {{ postgres_container_volumemounts }}
+        volumeMounts: {{ postgres_container_volumemounts | to_nice_json }}
 {% endif %}
 {% if postgres_container_ports is defined %}
-        ports: {{ postgres_container_ports }}
+        ports: {{ postgres_container_ports | to_nice_json }}
 {% endif %}
 {% if postgres_container_livenessprobe is defined %}
-        livenessProbe: {{ postgres_container_livenessprobe }}
+        livenessProbe: {{ postgres_container_livenessprobe | to_nice_json }}
 {% endif %}
 {% if postgres_container_readinessprobe is defined %}
-        readinessProbe: {{ postgres_container_readinessprobe }}
+        readinessProbe: {{ postgres_container_readinessprobe | to_nice_json }}
 {% endif %}
 {% if postgres_volumes is defined %}
-      volumes: {{ postgres_volumes|to_json }}
+      volumes: {{ postgres_volumes | to_nice_json }}
 {% endif %}
 {% if postgres_nodeselector is defined %}
       nodeSelector: {{ postgres_nodeselector }}

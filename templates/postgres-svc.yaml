@@ -2,12 +2,12 @@ apiVersion: "v1"
 kind: "Service"
 metadata:
   name: {{ postgres.name }}
-  labels: {{ postgres_labels }}
+  labels: {{ postgres_labels | to_nice_json }}
 spec:
 {% if postgres.type is defined %}
   type: {{ postgres.type }} 
 {% endif %}
-  selector: {{ postgres_selector|default(postgres_labels) }}
+  selector: {{ postgres_selector|default(postgres_labels) | to_nice_json }}
 {% if postgres_clusterIP is defined %}
   clusterIP:  {{ postgres_clusterIP }}
 {% endif %}
